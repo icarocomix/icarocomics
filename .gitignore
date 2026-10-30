@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+# Archivi di prova generati da tests/make_samples.py (oltre 1 GB)
+tests/samples/

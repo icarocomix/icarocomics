@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b4c9b"/>
+      <stop offset="1" stop-color="#16244d"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffe27a"/>
+      <stop offset="0.7" stop-color="#ffb02e"/>
+      <stop offset="1" stop-color="#f07a1a"/>
+    </radialGradient>
+  </defs>
+  <!-- tavola del fumetto -->
+  <rect x="10" y="8" width="108" height="112" rx="14" fill="url(#sky)"/>
+  <rect x="10" y="8" width="108" height="112" rx="14" fill="none" stroke="#0e1733" stroke-width="3"/>
+  <!-- il sole verso cui vola Icaro -->
+  <circle cx="88" cy="38" r="20" fill="url(#sun)"/>
+  <g stroke="#ffcf55" stroke-width="3" stroke-linecap="round">
+    <path d="M88 10v6M88 60v6M60 38h6M110 38h6M68 18l4 4M104 54l4 4M108 18l-4 4"/>
+  </g>
+  <!-- ali di piume -->
+  <g fill="#ffffff" stroke="#1b2a5a" stroke-width="2" stroke-linejoin="round">
+    <path d="M62 80c-10-14-26-22-44-22 6 6 10 10 12 14-6 0-10 2-14 4 8 2 12 4 15 7-5 1-8 3-10 6 12 1 24-1 41-9z"/>
+    <path d="M66 80c6-16 18-28 34-34-3 7-5 12-5 17 5-3 10-4 15-4-6 5-9 9-10 13 4-1 8-1 11 1-12 6-26 9-45 7z"/>
+  </g>
+  <!-- corpo stilizzato -->
+  <circle cx="64" cy="73" r="6" fill="#ffd9b0" stroke="#1b2a5a" stroke-width="2"/>
+  <path d="M64 80l0 18M64 98l-7 12M64 98l7 12" stroke="#ffd9b0" stroke-width="5" stroke-linecap="round"/>
+  <!-- vignette in basso -->
+  <path d="M20 112h88" stroke="#5b78c7" stroke-width="2" stroke-dasharray="6 4"/>
+</svg>
