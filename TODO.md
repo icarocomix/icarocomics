@@ -11,3 +11,11 @@
 - [x] Installazione sul sistema + registrazione MIME + verifica `xdg-mime`
 - [x] Avvio reale tramite associazione MIME
 - [x] Documentazione `docs/` e README
+
+## Aggiornamento Fedora 45 / self-test
+
+- [x] Diagnosi mancato avvio (PyQt6 pip --user su Python 3.14) → installato `python3-pyqt6`
+- [x] Self-test: stato iniziale neutro + ripristino integrale del file preferenze
+- [x] Verifica offscreen (enhance=true, senza preferenze, caso di fallimento)
+- [x] Documentazione `docs/aggiornamento-fedora-45-e-selftest.md`
+- [ ] Aggiornare la copia installata con `./install.sh`

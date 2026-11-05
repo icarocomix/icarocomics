@@ -4,7 +4,7 @@ Lettore di fumetti CBZ / CBR / CB7 per Fedora/GNOME pensato per archivi molto gr
 
 ## Requisiti
 
-- `python3`, `python3-pyqt6`, `python3-pillow`
+- `python3`, `python3-pyqt6` (pacchetto di sistema, non `pip --user`), `python3-pillow`
 - `unrar` per i CBR (RPM Fusion nonfree)
 - `7zip` per i CB7 (facoltativo)
 

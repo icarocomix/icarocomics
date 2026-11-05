@@ -45,7 +45,7 @@ Applicazione desktop per Fedora/GNOME per leggere fumetti CBZ/CBR anche molto gr
 - Il `7z` di Fedora non apre i RAR. Per questo non viene usato come fallback dei CBR, ma solo per i CB7.
 - Con l'unsharp mask completo, il contrasto locale costava circa 216 ms su una pagina da 10 Mpx. Siccome a raggio ampio la sfocatura è un segnale a bassa frequenza, ora viene calcolata su una copia ridotta 4× e riportata a piena risoluzione, poi ricomposta con un blend estrapolato. Lo scarto medio misurato è di 0,37 livelli (p99 = 1 livello), con circa il 40% di tempo in meno. Il toggle dell'auto-miglioramento su quella pagina è passato da 614 ms a circa 270–360 ms.
 - Il doppio clic genera prima un clic singolo. Per questo il doppio clic attiva lo schermo intero solo nella zona centrale, mentre sui lati vale come un ulteriore cambio pagina.
-- PyQt6 è installato nel site-packages dell'utente: il launcher non può usare `python3 -s`/`-I`.
+- PyQt6 era installato nel site-packages dell'utente: il launcher non può usare `python3 -s`/`-I`. Con il passaggio a Fedora 45 (Python 3.14 → 3.15) quell'installazione non è più stata trovata; ora si usa il pacchetto di sistema `python3-pyqt6` (vedi `docs/aggiornamento-fedora-45-e-selftest.md`).
 - Il tema icone di Qt non è garantito sotto GNOME (in modalità offscreen risulta vuoto): le icone della toolbar sono SVG integrati.
 
 ### Misure (self-test end-to-end)

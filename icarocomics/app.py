@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import QApplication, QMessageBox
 
 from icarocomics import APP_ID, APP_NAME, __version__
 from icarocomics.layout import ZoomMode
-from icarocomics.mainwindow import MainWindow
+from icarocomics.mainwindow import MainWindow, _file_key
 
 _ICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", f"{APP_ID}.svg")
 
@@ -43,7 +43,11 @@ def _normalize_path(arg: str) -> str:
 class SelfTest(QObject):
     """Verifica automatica end-to-end: apertura, prima pagina, sfoglio con prefetch, salto
     all'ultima pagina, auto-miglioramento, manga + adatta larghezza. Salva screenshot e
-    stampa un riepilogo JSON dei tempi."""
+    stampa un riepilogo JSON dei tempi.
+
+    Il test parte sempre da uno stato neutro (auto-miglioramento e manga spenti, adatta
+    pagina) qualunque siano le preferenze dell'utente, e alla fine ripristina byte per byte
+    il file delle preferenze così com'era prima dell'avvio."""
 
     def __init__(self, win: MainWindow, path: str, outdir: str):
         super().__init__(win)
@@ -60,9 +64,48 @@ class SelfTest(QObject):
         self._deadline = QTimer(self)
         self._deadline.setSingleShot(True)
         self._deadline.timeout.connect(lambda: self._fail("timeout"))
+        self._settings_backup = self._backup_settings()
+
+    def _backup_settings(self) -> bytes | None:
+        # Fotografo il file grezzo invece di copiare chiave per chiave: QSettings in formato
+        # INI non conserva i tipi (una lista di un solo elemento rilegge come stringa), quindi
+        # una riscrittura dei valori potrebbe alterare preferenze come "recent".
+        settings = self.win.settings
+        settings.sync()
+        try:
+            with open(settings.fileName(), "rb") as fh:
+                return fh.read()
+        except FileNotFoundError:
+            return None
+
+    def _restore_settings(self) -> None:
+        # Va chiamato dopo win.close(): closeEvent salva geometria e avanzamento, che
+        # altrimenti sovrascriverebbero quelli dell'utente con i valori del test.
+        settings = self.win.settings
+        settings.sync()
+        path = settings.fileName()
+        try:
+            if self._settings_backup is None:
+                if os.path.exists(path):
+                    os.remove(path)
+            else:
+                with open(path, "wb") as fh:
+                    fh.write(self._settings_backup)
+        except OSError as exc:
+            sys.stderr.write(f"[selftest] impossibile ripristinare le preferenze {path}: {exc}\n")
+
+    def _reset_state(self) -> None:
+        # Senza questo reset, con "enhance=true" già salvato setChecked(True) non cambia stato,
+        # page_shown non viene mai emesso e il test scade in timeout.
+        self.win.set_enhanced(False)
+        self.win.manga_default = False
+        self.win.view.manga = False
+        self.win.settings.remove(f"manga_by_file/{_file_key(self.path)}")
+        self.win._set_zoom(ZoomMode.FIT_PAGE)
 
     def start(self) -> None:
         os.makedirs(self.outdir, exist_ok=True)
+        self._reset_state()
         self._deadline.start(60_000)
         QTimer.singleShot(200, self._next)
 
@@ -128,10 +171,6 @@ class SelfTest(QObject):
     def _s_done(self) -> None:
         cached, size = self.win.loader.stats()
         self.results.update(cache_pages=cached, cache_mb=round(size / 1048576, 1), ok=True)
-        # Ripristino le preferenze toccate dal test per non alterare quelle dell'utente.
-        self.win.act_enhance.setChecked(False)
-        self.win.act_manga.setChecked(False)
-        self.win._set_zoom(ZoomMode.FIT_PAGE)
         self._finish(0)
 
     def _fail(self, reason: str) -> None:
@@ -142,6 +181,7 @@ class SelfTest(QObject):
         self._deadline.stop()
         print(json.dumps(self.results, ensure_ascii=False, indent=2), flush=True)
         self.win.close()
+        self._restore_settings()
         QApplication.instance().exit(code)
 
 
